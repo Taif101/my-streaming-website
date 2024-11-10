@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تسجيل الدخول</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .stream-container {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .video-container {
+            width: 100%;
+            margin: 1rem auto;
+            position: relative;
+            padding-top: 56.25%;
+            background: #000;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #1557b0;
+        }
+
+        .admin-panel {
+            display: none;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .admin-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .admin-form {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .admin-form input,
+        .admin-form select {
+            margin-bottom: 0;
+        }
+
+        .admin-form button {
+            height: 42px;
+            width: 120px;
+        }
+
+        .admin-panel table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .admin-panel th, .admin-panel td {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .admin-panel th {
+            background: #f5f5f5;
+        }
+
+        .stream-page {
+            display: none;
+        }
+
+        .toggle-button {
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .toggle-active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .toggle-inactive {
+            background: #f44336;
+            color: white;
+        }
+
+        .delete-button {
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+            margin-right: 5px;
+        }
+
+        .filter-container {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-button {
+            background: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .filter-button.active {
+            background: #28a745;
+        }
+
+        .account-type-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .stream-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 1rem 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .info-card {
+            text-align: center;
+            padding: 0.8rem 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-right: 4px solid #1a73e8;
+            min-width: 150px;
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            color: #1a73e8;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .info-value.warning {
+            color: #ff9800;
+        }
+
+        .info-value.danger {
+            color: #f44336;
+        }
+
+        .video-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .video-controls button {
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <!-- نموذج تسجيل الدخول -->
+    <div class="container" id="loginForm">
+        <h1>تسجيل الدخول</h1>
+        <form onsubmit="return handleLogin(event)">
+            <div class="form-group">
+                <label>اسم المستخدم</label>
+                <input type="text" id="loginUsername" required>
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit">دخول</button>
+        </form>
+    </div>
+    <!-- لوحة التحكم -->
+    <div class="container admin-panel" id="adminPanel">
+        <h1>لوحة التحكم</h1>
+        
+        <!-- نموذج إنشاء حساب جديد -->
+        <div class="admin-section">
+            <h2 style="color: #1a73e8; margin: 1.5rem 0 1rem;">إنشاء حساب جديد</h2>
+            <form onsubmit="return handleRegister(event)" class="admin-form">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>اسم المستخدم</label>
+                        <input type="text" id="registerUsername" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>نوع الحساب</label>
+                        <select class="account-type-select" id="accountType">
+                            <option value="regular">حساب عادي (30 يوم)</option>
+                            <option value="trial">حساب تجريبي (دقيقة واحدة)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button type="submit" style="margin: 0;">إنشاء الحساب</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="filter-container">
+            <button id="filterAll" class="filter-button active" onclick="filterAccounts('all')">الكل</button>
+            <button id="filterActive" class="filter-button" onclick="filterAccounts('active')">الحسابات المفعلة</button>
+            <button id="filterInactive" class="filter-button" onclick="filterAccounts('inactive')">الحسابات المعطلة</button>
+        </div>
+
+        <button onclick="logout()" style="margin-bottom: 1rem;">تسجيل الخروج</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>اسم المستخدم</th>
+                    <th>كلمة المرور</th>
+                    <th>نوع الحساب</th>
+                    <th>تاريخ التسجيل</th>
+                    <th>المدة المتبقية</th>
+                    <th>حالة الحساب</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- صفحة البث المباشر -->
+    <div class="container stream-container stream-page" id="streamPage">
+        <h1>البث المباشر</h1>
+        <div class="stream-info">
+            <div class="info-card">
+                <div class="info-label">نوع الحساب</div>
+                <div class="info-value" id="accountTypeDisplay"></div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">المدة المتبقية</div>
+                <div class="info-value" id="remainingTimeDisplay"></div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">حالة الحساب</div>
+                <div class="info-value" id="accountStatusDisplay"></div>
+            </div>
+        </div>
+        <div class="video-container">
+            <video id="streamPlayer" controls autoplay>
+                لا يدعم متصفحك تشغيل الفيديو
+            </video>
+        </div>
+        <div class="video-controls">
+            <button onclick="logout()">تسجيل الخروج</button>
+        </div>
+    </div>
+    <script>
+        // تخزين المستخدمين في localStorage
+        if (!localStorage.getItem('users')) {
+            const adminAccount = {
+                username: 'admin',
+                password: 'admin123',
+                accountType: 'admin',
+                registrationDate: new Date().toLocaleString('ar'),
+                expiryDate: null,
+                status: 'فعال',
+                isActive: true
+            };
+            localStorage.setItem('users', JSON.stringify([adminAccount]));
+        }
+
+        function calculateExpiryDate(accountType) {
+            const now = new Date();
+            if (accountType === 'trial') {
+                return new Date(now.getTime() + 60000); // دقيقة واحدة
+            } else if (accountType === 'regular') {
+                return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 يوم
+            }
+            return null;
+        }
+
+        function formatDateDiff(expiryDateStr, accountType) {
+            if (!expiryDateStr) return 'لا ينتهي';
+            
+            const now = new Date();
+            const expiryDate = new Date(expiryDateStr);
+            
+            if (isNaN(expiryDate.getTime())) {
+                return 'تاريخ غير صالح';
+            }
+            
+            const diff = expiryDate.getTime() - now.getTime();
+            
+            if (diff <= 0) return 'منتهي';
+            
+            if (accountType === 'trial') {
+                const minutes = Math.ceil(diff / (1000 * 60));
+                return `${minutes} دقيقة`;
+            } else {
+                const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                return `${days} يوم`;
+            }
+        }
+
+        let currentFilter = 'all';
+
+        function filterAccounts(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`filter${filter.charAt(0).toUpperCase() + filter.slice(1)}`).classList.add('active');
+            updateUsersTable();
+        }
+
+        function switchForm(type) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('streamPage').style.display = 'none';
+
+            if (type === 'admin') {
+                document.getElementById('adminPanel').style.display = 'block';
+                updateUsersTable();
+            } else {
+                document.getElementById(type + 'Form').style.display = 'block';
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                if (username === 'admin' && password === 'admin123') {
+                    switchForm('admin');
+                    return;
+                }
+
+                if (!user.isActive) {
+                    alert('هذا الحساب معطل. الرجاء التواصل مع المسؤول');
+                    return;
+                }
+
+                const now = new Date();
+                const expiryDate = new Date(user.expiryDate);
+                
+                if (expiryDate && now > expiryDate) {
+                    alert('عذراً، انتهت صلاحية حسابك');
+                    return;
+                }
+                
+                sessionStorage.setItem('currentUser', username);
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('streamPage').style.display = 'block';
+                setupStream();
+            } else {
+                alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            const accountType = document.getElementById('accountType').value;
+            
+            const users = JSON.parse(localStorage.getItem('users'));
+            
+            if (users.some(u => u.username === username)) {
+                alert('اسم المستخدم موجود مسبقاً');
+                return;
+            }
+
+            const registrationDate = new Date();
+            const expiryDate = calculateExpiryDate(accountType);
+            
+            const newUser = {
+                username,
+                password,
+                accountType,
+                registrationDate: registrationDate.toLocaleString('ar'),
+                expiryDate: expiryDate ? expiryDate.toISOString() : null,
+                status: 'فعال',
+                isActive: true
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('تم إنشاء الحساب بنجاح!');
+            
+            // إعادة تعيين النموذج
+            document.getElementById('registerUsername').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('accountType').selectedIndex = 0;
+            
+            // تحديث الجدول
+            updateUsersTable();
+        }
+
+        function deleteAccount(username) {
+            if (confirm('هل أنت متأكد من حذف هذا الحساب؟')) {
+                const users = JSON.parse(localStorage.getItem('users'));
+                const updatedUsers = users.filter(user => user.username !== username);
+                localStorage.setItem('users', JSON.stringify(updatedUsers));
+                updateUsersTable();
+            }
+        }
+
+        function updateStreamInfo() {
+            const username = sessionStorage.getItem('currentUser');
+            if (!username) return;
+
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users.find(u => u.username === username);
+            
+            if (user) {
+                const accountTypeDisplay = document.getElementById('accountTypeDisplay');
+                const remainingTimeDisplay = document.getElementById('remainingTimeDisplay');
+                const accountStatusDisplay = document.getElementById('accountStatusDisplay');
+
+                // تحديث نوع الحساب
+                const accountTypeText = user.accountType === 'trial' ? 'تجريبي' : 'عادي';
+                accountTypeDisplay.textContent = accountTypeText;
+
+                // تحديث المدة المتبقية
+                const remainingTime = formatDateDiff(user.expiryDate, user.accountType);
+                remainingTimeDisplay.textContent = remainingTime;
+
+                // تحديث حالة الحساب
+                const now = new Date();
+                const expiryDate = new Date(user.expiryDate);
+                let statusText = 'فعال';
+                let statusClass = '';
+
+                if (now > expiryDate) {
+                    statusText = 'منتهي الصلاحية';
+                    statusClass = 'danger';
+                } else if (!user.isActive) {
+                    statusText = 'معطل';
+                    statusClass = 'warning';
+                }
+
+                accountStatusDisplay.textContent = statusText;
+                accountStatusDisplay.className = 'info-value ' + statusClass;
+
+                // إضافة تنبيه للمدة المتبقية عندما تكون قليلة
+                if (user.accountType === 'trial' && expiryDate - now < 30000) { // أقل من 30 ثانية
+                    remainingTimeDisplay.className = 'info-value danger';
+                } else if (user.accountType === 'regular' && expiryDate - now < 86400000) { // أقل من يوم
+                    remainingTimeDisplay.className = 'info-value warning';
+                } else {
+                    remainingTimeDisplay.className = 'info-value';
+                }
+            }
+        }
+
+        function updateUsersTable() {
+            const users = JSON.parse(localStorage.getItem('users'));
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            let filteredUsers = [...users];
+            
+            // تطبيق الفلتر
+            if (currentFilter !== 'all') {
+                filteredUsers = users.filter(user => {
+                    const isActive = user.isActive && (!user.expiryDate || new Date(user.expiryDate) > new Date());
+                    return currentFilter === 'active' ? isActive : !isActive;
+                });
+            }
+            
+            filteredUsers.forEach((user, index) => {
+                const now = new Date();
+                const expiryDate = user.expiryDate ? new Date(user.expiryDate) : null;
+                const isExpired = expiryDate && now > expiryDate;
+                
+                // تحديث حالة الحساب تلقائياً
+                if (user.accountType !== 'admin') {
+                    user.isActive = !isExpired && user.isActive;
+                }
+                
+                const tr = document.createElement('tr');
+                const toggleButtonClass = user.isActive ? 'toggle-active' : 'toggle-inactive';
+                const toggleButtonText = user.isActive ? 'فعال' : 'معطل';
+                
+                const remainingTime = formatDateDiff(user.expiryDate, user.accountType);
+                
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.username}</td>
+                    <td>${user.password}</td>
+                    <td>${user.accountType === 'admin' ? 'مسؤول' : user.accountType === 'trial' ? 'تجريبي' : 'عادي'}</td>
+                    <td>${user.registrationDate || 'غير متوفر'}</td>
+                    <td>${remainingTime}</td>
+                    <td>
+                        ${user.username !== 'admin' ? 
+                            `<button onclick="toggleAccountStatus('${user.username}')" 
+                                     class="toggle-button ${toggleButtonClass}">
+                                ${toggleButtonText}
+                            </button>` : 
+                            'مسؤول النظام'}
+                    </td>
+                    <td>
+                        ${user.username !== 'admin' ? 
+                            `<button onclick="deleteAccount('${user.username}')" class="delete-button">
+                                حذف
+                            </button>` : 
+                            ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // تحديث localStorage مع الحالات الجديدة
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        function toggleAccountStatus(username) {
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users.find(u => u.username === username);
+            if (user) {
+                const now = new Date();
+                const expiryDate = user.expiryDate ? new Date(user.expiryDate) : null;
+                
+                // لا يمكن تفعيل الحساب إذا كان منتهي الصلاحية
+                if (expiryDate && now > expiryDate) {
+                    alert('لا يمكن تفعيل هذا الحساب لأنه منتهي الصلاحية');
+                    return;
+                }
+                
+                user.isActive = !user.isActive;
+                localStorage.setItem('users', JSON.stringify(users));
+                updateUsersTable();
+            }
+        }
+
+        function setupStream() {
+            updateStreamInfo(); // تحديث معلومات المستخدم عند بدء البث
+            
+            const video = document.getElementById('streamPlayer');
+            const streamUrl = 'http://localhost:8080/live';
+            
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(streamUrl);
+                hls.attachMedia(video);
+                
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        switch(data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                hls.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hls.recoverMediaError();
+                                break;
+                            default:
+                                initPlayer();
+                                break;
+                        }
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = streamUrl;
+            } else {
+                alert('متصفحك لا يدعم تشغيل البث المباشر');
+            }
+
+            // تحديث معلومات المستخدم كل 10 ثواني
+            setInterval(updateStreamInfo, 10000);
+        }
+
+        function initPlayer() {
+            const video = document.getElementById('streamPlayer');
+            video.src = '';
+            setupStream();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            switchForm('login');
+        }
+
+        // تحديث حالة الحسابات كل دقيقة
+        setInterval(() => {
+            const users = JSON.parse(localStorage.getItem('users'));
+            const now = new Date();
+            
+            let needsUpdate = false;
+            users.forEach(user => {
+                if (user.accountType !== 'admin' && user.expiryDate) {
+                    const expiryDate = new Date(user.expiryDate);
+                    const prevStatus = user.status;
+                    
+                    if (now > expiryDate) {
+                        user.status = 'منتهي الصلاحية';
+                        user.isActive = false;
+                    } else if (!user.isActive) {
+                        user.status = 'معطل';
+                    } else {
+                        user.status = 'فعال';
+                    }
+                    
+                    if (prevStatus !== user.status) {
+                        needsUpdate = true;
+                    }
+                }
+            });
+            
+            if (needsUpdate) {
+                localStorage.setItem('users', JSON.stringify(users));
+                if (document.getElementById('adminPanel').style.display === 'block') {
+                    updateUsersTable();
+                }
+            }
+        }, 60000);
+
+        // التحقق من صلاحية الحساب بشكل دوري أثناء المشاهدة
+        setInterval(() => {
+            const streamPage = document.getElementById('streamPage');
+            
+            if (streamPage.style.display === 'block') {
+                const username = sessionStorage.getItem('currentUser');
+                if (username) {
+                    const users = JSON.parse(localStorage.getItem('users'));
+                    const user = users.find(u => u.username === username);
+                    
+                    if (user) {
+                        const now = new Date();
+                        const expiryDate = new Date(user.expiryDate);
+                        
+                        if (now > expiryDate || !user.isActive) {
+                            alert('انتهت صلاحية جلستك. الرجاء تسجيل الدخول مرة أخرى.');
+                            logout();
+                        }
+                    }
+                }
+            }
+        }, 30000);
+    </script>
+    <!-- إضافة مكتبة HLS.js للتعامل مع البث المباشر -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.min.js"></script>
+</body>
+</html>

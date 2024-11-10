@@ -1,0 +1,12 @@
+{
+    "name": "your-website",
+    "version": "1.0.0",
+    "description": "Live Streaming Website",
+    "scripts": {
+      "start": "npx serve",
+      "dev": "npx serve"
+    },
+    "dependencies": {
+      "serve": "^14.2.1"
+    }
+  }
